@@ -37,60 +37,18 @@ const ScanDetail = () => {
 
   useEffect(() => {
     fetchScan();
-    
-    // GSAP animations
-    const loadGSAP = async () => {
-      const gsap = (await import('gsap')).default;
-      
-      gsap.from('.scan-detail-header', {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        ease: 'power3.out'
-      });
-      
-      gsap.from('.scan-image-container', {
-        opacity: 0,
-        scale: 0.98,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: 0.2
-      });
-      
-      gsap.from('.analysis-panel', {
-        opacity: 0,
-        x: 20,
-        duration: 0.6,
-        ease: 'power3.out',
-        delay: 0.4
-      });
-    };
-
-    loadGSAP();
   }, [fetchScan]);
 
-  const getScanTypeLabel = (type) => {
-    const labels = {
-      xray: 'X-Ray',
-      mri: 'MRI',
-      ct_scan: 'CT Scan'
-    };
-    return labels[type] || type;
-  };
+  const getScanTypeLabel = (type) => ({ xray: 'X-Ray', mri: 'MRI', ct_scan: 'CT Scan' }[type] || type);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
   };
 
   const handleDownload = () => {
     if (!scan?.image_base64) return;
-    
     const link = document.createElement('a');
     link.href = `data:image/jpeg;base64,${scan.image_base64}`;
     link.download = scan.file_name || 'scan.jpg';
@@ -102,36 +60,28 @@ const ScanDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-screen bg-white text-black flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 mx-auto animate-spin text-white/50" />
-          <p className="text-white/50 mt-4 font-mono text-sm">Loading scan details...</p>
+          <Loader2 className="w-8 h-8 mx-auto animate-spin text-gray-400" />
+          <p className="text-gray-500 mt-4 font-mono text-sm">Loading scan details...</p>
         </div>
       </div>
     );
   }
 
-  if (!scan) {
-    return null;
-  }
+  if (!scan) return null;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white text-black">
       <Navbar />
       <Sidebar />
       
       <main className="lg:pl-60 pt-20">
         <div className="max-w-7xl mx-auto px-6 py-8">
           {/* Header */}
-          <div className="scan-detail-header mb-8">
-            <Button
-              variant="ghost"
-              className="mb-4 font-mono text-xs text-white/50 hover:text-white"
-              onClick={() => navigate(-1)}
-              data-testid="back-btn"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+          <div className="mb-8">
+            <Button variant="ghost" className="mb-4 font-mono text-xs text-gray-500 hover:text-black" onClick={() => navigate(-1)} data-testid="back-btn">
+              <ArrowLeft className="w-4 h-4 mr-2" />Back
             </Button>
             
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -140,100 +90,67 @@ const ScanDetail = () => {
                   <h1 className="font-mono text-2xl font-light uppercase tracking-wider" data-testid="scan-title">
                     {getScanTypeLabel(scan.scan_type)} Analysis
                   </h1>
-                  {scan.status === 'completed' && (
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                  )}
-                  {scan.status === 'failed' && (
-                    <AlertCircle className="w-5 h-5 text-red-500" />
-                  )}
+                  {scan.status === 'completed' && <CheckCircle className="w-5 h-5 text-green-600" />}
+                  {scan.status === 'failed' && <AlertCircle className="w-5 h-5 text-red-500" />}
                 </div>
-                <p className="text-white/50 text-sm">{formatDate(scan.created_at)}</p>
+                <p className="text-gray-500 text-sm">{formatDate(scan.created_at)}</p>
               </div>
               
-              <Button
-                variant="outline"
-                className="font-mono text-xs uppercase tracking-wider border-white/20 text-white hover:bg-white/10"
-                onClick={handleDownload}
-                data-testid="download-btn"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Image
+              <Button variant="outline" className="font-mono text-xs uppercase tracking-wider border-gray-300" onClick={handleDownload} data-testid="download-btn">
+                <Download className="w-4 h-4 mr-2" />Download Image
               </Button>
             </div>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Image Section */}
-            <div className="scan-image-container">
-              <div className="noir-card p-4">
-                <div className="aspect-square bg-zinc-950 relative overflow-hidden">
+            <div>
+              <div className="p-4 bg-gray-50 border border-gray-200">
+                <div className="aspect-square bg-gray-200 relative overflow-hidden">
                   {scan.image_base64 ? (
                     <>
-                      <img
-                        src={`data:image/jpeg;base64,${scan.image_base64}`}
-                        alt={scan.file_name}
-                        className="w-full h-full object-contain"
-                      />
-                      {/* Corner markers */}
-                      <div className="absolute top-4 left-4 w-8 h-8 border-l border-t border-white/40" />
-                      <div className="absolute top-4 right-4 w-8 h-8 border-r border-t border-white/40" />
-                      <div className="absolute bottom-4 left-4 w-8 h-8 border-l border-b border-white/40" />
-                      <div className="absolute bottom-4 right-4 w-8 h-8 border-r border-b border-white/40" />
+                      <img src={`data:image/jpeg;base64,${scan.image_base64}`} alt={scan.file_name} className="w-full h-full object-contain" />
+                      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-black/40" />
+                      <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-black/40" />
+                      <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-black/40" />
+                      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-black/40" />
                     </>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Scan className="w-16 h-16 text-white/20" />
+                      <Scan className="w-16 h-16 text-gray-300" />
                     </div>
                   )}
                 </div>
                 <div className="mt-4 flex items-center justify-between">
-                  <p className="font-mono text-xs text-white/50 truncate flex-1">
-                    {scan.file_name}
-                  </p>
-                  <span className="font-mono text-xs uppercase tracking-wider px-2 py-1 bg-white/5 border border-white/10 ml-4">
-                    {getScanTypeLabel(scan.scan_type)}
-                  </span>
+                  <p className="font-mono text-xs text-gray-500 truncate flex-1">{scan.file_name}</p>
+                  <span className="font-mono text-xs uppercase tracking-wider px-2 py-1 bg-white border border-gray-300 ml-4">{getScanTypeLabel(scan.scan_type)}</span>
                 </div>
               </div>
             </div>
 
             {/* Analysis Section */}
-            <div className="analysis-panel">
+            <div>
               {scan.status === 'failed' ? (
-                <div className="noir-card p-8 text-center">
+                <div className="p-8 bg-gray-50 border border-gray-200 text-center">
                   <AlertCircle className="w-12 h-12 mx-auto text-red-500 mb-4" />
                   <h3 className="font-mono text-lg uppercase tracking-wider mb-2">Analysis Failed</h3>
-                  <p className="text-white/60 text-sm">
-                    The AI could not analyze this image. Please try uploading again.
-                  </p>
+                  <p className="text-gray-600 text-sm">The AI could not analyze this image. Please try uploading again.</p>
                 </div>
               ) : scan.status === 'processing' ? (
-                <div className="noir-card p-8 text-center">
-                  <Loader2 className="w-12 h-12 mx-auto animate-spin text-white/50 mb-4" />
+                <div className="p-8 bg-gray-50 border border-gray-200 text-center">
+                  <Loader2 className="w-12 h-12 mx-auto animate-spin text-gray-400 mb-4" />
                   <h3 className="font-mono text-lg uppercase tracking-wider mb-2">Analyzing...</h3>
-                  <p className="text-white/60 text-sm">
-                    AI is processing your medical image
-                  </p>
+                  <p className="text-gray-600 text-sm">AI is processing your medical image</p>
                 </div>
               ) : (
-                <div className="noir-card p-6">
+                <div className="p-6 bg-gray-50 border border-gray-200">
                   <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
-                    <TabsList className="w-full bg-white/5 border border-white/10 p-1 mb-6">
-                      <TabsTrigger 
-                        value="patient" 
-                        className="flex-1 font-mono text-xs uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:text-black"
-                        data-testid="patient-view-tab"
-                      >
-                        <Heart className="w-4 h-4 mr-2" />
-                        Patient View
+                    <TabsList className="w-full bg-white border border-gray-300 p-1 mb-6">
+                      <TabsTrigger value="patient" className="flex-1 font-mono text-xs uppercase tracking-wider data-[state=active]:bg-black data-[state=active]:text-white" data-testid="patient-view-tab">
+                        <Heart className="w-4 h-4 mr-2" />Patient View
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="doctor" 
-                        className="flex-1 font-mono text-xs uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:text-black"
-                        data-testid="doctor-view-tab"
-                      >
-                        <Stethoscope className="w-4 h-4 mr-2" />
-                        Doctor View
+                      <TabsTrigger value="doctor" className="flex-1 font-mono text-xs uppercase tracking-wider data-[state=active]:bg-black data-[state=active]:text-white" data-testid="doctor-view-tab">
+                        <Stethoscope className="w-4 h-4 mr-2" />Doctor View
                       </TabsTrigger>
                     </TabsList>
 
@@ -242,69 +159,49 @@ const ScanDetail = () => {
                       {scan.patient_view ? (
                         <>
                           <div>
-                            <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                              Summary
-                            </h3>
-                            <p className="text-white/90 leading-relaxed">
-                              {scan.patient_view.summary}
-                            </p>
+                            <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">Summary</h3>
+                            <p className="text-gray-700 leading-relaxed">{scan.patient_view.summary}</p>
                           </div>
-
-                          {scan.patient_view.findings && scan.patient_view.findings.length > 0 && (
+                          {scan.patient_view.findings?.length > 0 && (
                             <div>
-                              <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                                What We Found
-                              </h3>
+                              <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">What We Found</h3>
                               <ul className="space-y-2">
                                 {scan.patient_view.findings.map((finding, i) => (
                                   <li key={i} className="flex items-start gap-3">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-white/40 mt-2 flex-shrink-0" />
-                                    <span className="text-white/80 text-sm">{finding}</span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2 flex-shrink-0" />
+                                    <span className="text-gray-700 text-sm">{finding}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                           )}
-
                           {scan.patient_view.what_it_means && (
                             <div>
-                              <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                                What This Means
-                              </h3>
-                              <p className="text-white/80 text-sm leading-relaxed">
-                                {scan.patient_view.what_it_means}
-                              </p>
+                              <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">What This Means</h3>
+                              <p className="text-gray-700 text-sm leading-relaxed">{scan.patient_view.what_it_means}</p>
                             </div>
                           )}
-
-                          {scan.patient_view.next_steps && scan.patient_view.next_steps.length > 0 && (
+                          {scan.patient_view.next_steps?.length > 0 && (
                             <div>
-                              <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                                Recommended Next Steps
-                              </h3>
+                              <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">Recommended Next Steps</h3>
                               <ul className="space-y-2">
                                 {scan.patient_view.next_steps.map((step, i) => (
                                   <li key={i} className="flex items-start gap-3">
-                                    <span className="font-mono text-xs text-white/40">{i + 1}.</span>
-                                    <span className="text-white/80 text-sm">{step}</span>
+                                    <span className="font-mono text-xs text-gray-400">{i + 1}.</span>
+                                    <span className="text-gray-700 text-sm">{step}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                           )}
-
                           {scan.patient_view.reassurance && (
-                            <div className="p-4 bg-green-500/10 border border-green-500/20">
-                              <p className="text-green-400 text-sm">
-                                {scan.patient_view.reassurance}
-                              </p>
+                            <div className="p-4 bg-green-50 border border-green-200">
+                              <p className="text-green-700 text-sm">{scan.patient_view.reassurance}</p>
                             </div>
                           )}
                         </>
                       ) : (
-                        <p className="text-white/50 text-center py-8">
-                          Patient view not available
-                        </p>
+                        <p className="text-gray-500 text-center py-8">Patient view not available</p>
                       )}
                     </TabsContent>
 
@@ -313,87 +210,64 @@ const ScanDetail = () => {
                       {scan.doctor_view ? (
                         <>
                           <div>
-                            <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                              Clinical Summary
-                            </h3>
-                            <p className="text-white/90 leading-relaxed">
-                              {scan.doctor_view.summary}
-                            </p>
+                            <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">Clinical Summary</h3>
+                            <p className="text-gray-700 leading-relaxed">{scan.doctor_view.summary}</p>
                           </div>
-
                           {scan.doctor_view.confidence_level && (
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10">
-                              <span className="font-mono text-xs uppercase tracking-wider text-white/50">
-                                Confidence:
-                              </span>
-                              <span className={`font-mono text-xs uppercase tracking-wider ${
-                                scan.doctor_view.confidence_level === 'High' ? 'text-green-400' :
-                                scan.doctor_view.confidence_level === 'Medium' ? 'text-yellow-400' :
-                                'text-red-400'
-                              }`}>
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300">
+                              <span className="font-mono text-xs uppercase tracking-wider text-gray-500">Confidence:</span>
+                              <span className={`font-mono text-xs uppercase tracking-wider ${scan.doctor_view.confidence_level === 'High' ? 'text-green-600' : scan.doctor_view.confidence_level === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`}>
                                 {scan.doctor_view.confidence_level}
                               </span>
                             </div>
                           )}
-
-                          {scan.doctor_view.findings && scan.doctor_view.findings.length > 0 && (
+                          {scan.doctor_view.findings?.length > 0 && (
                             <div>
-                              <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                                Detailed Findings
-                              </h3>
+                              <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">Detailed Findings</h3>
                               <ul className="space-y-2">
                                 {scan.doctor_view.findings.map((finding, i) => (
                                   <li key={i} className="flex items-start gap-3">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0" />
-                                    <span className="text-white/80 text-sm">{finding}</span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                                    <span className="text-gray-700 text-sm">{finding}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                           )}
-
-                          {scan.doctor_view.observations && scan.doctor_view.observations.length > 0 && (
+                          {scan.doctor_view.observations?.length > 0 && (
                             <div>
-                              <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                                Technical Observations
-                              </h3>
+                              <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">Technical Observations</h3>
                               <ul className="space-y-2">
                                 {scan.doctor_view.observations.map((obs, i) => (
                                   <li key={i} className="flex items-start gap-3">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-white/40 mt-2 flex-shrink-0" />
-                                    <span className="text-white/80 text-sm">{obs}</span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2 flex-shrink-0" />
+                                    <span className="text-gray-700 text-sm">{obs}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                           )}
-
-                          {scan.doctor_view.areas_of_concern && scan.doctor_view.areas_of_concern.length > 0 && (
+                          {scan.doctor_view.areas_of_concern?.length > 0 && (
                             <div>
-                              <h3 className="font-mono text-xs uppercase tracking-wider text-red-400/70 mb-3">
-                                Areas of Concern
-                              </h3>
+                              <h3 className="font-mono text-xs uppercase tracking-wider text-red-500 mb-3">Areas of Concern</h3>
                               <ul className="space-y-2">
                                 {scan.doctor_view.areas_of_concern.map((area, i) => (
                                   <li key={i} className="flex items-start gap-3">
-                                    <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
-                                    <span className="text-white/80 text-sm">{area}</span>
+                                    <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                                    <span className="text-gray-700 text-sm">{area}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                           )}
-
-                          {scan.doctor_view.recommendations && scan.doctor_view.recommendations.length > 0 && (
+                          {scan.doctor_view.recommendations?.length > 0 && (
                             <div>
-                              <h3 className="font-mono text-xs uppercase tracking-wider text-white/70 mb-3">
-                                Recommendations
-                              </h3>
+                              <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-3">Recommendations</h3>
                               <ul className="space-y-2">
                                 {scan.doctor_view.recommendations.map((rec, i) => (
                                   <li key={i} className="flex items-start gap-3">
-                                    <span className="font-mono text-xs text-white/40">{i + 1}.</span>
-                                    <span className="text-white/80 text-sm">{rec}</span>
+                                    <span className="font-mono text-xs text-gray-400">{i + 1}.</span>
+                                    <span className="text-gray-700 text-sm">{rec}</span>
                                   </li>
                                 ))}
                               </ul>
@@ -401,19 +275,15 @@ const ScanDetail = () => {
                           )}
                         </>
                       ) : (
-                        <p className="text-white/50 text-center py-8">
-                          Doctor view not available
-                        </p>
+                        <p className="text-gray-500 text-center py-8">Doctor view not available</p>
                       )}
                     </TabsContent>
                   </Tabs>
 
                   {/* Disclaimer */}
-                  <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20">
-                    <p className="text-yellow-400/80 text-xs font-mono">
-                      DISCLAIMER: This AI analysis is for educational purposes only and should not 
-                      replace professional medical advice. Always consult with a qualified healthcare 
-                      provider for diagnosis and treatment.
+                  <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200">
+                    <p className="text-yellow-700 text-xs font-mono">
+                      DISCLAIMER: This AI analysis is for educational purposes only and should not replace professional medical advice.
                     </p>
                   </div>
                 </div>
@@ -421,7 +291,6 @@ const ScanDetail = () => {
             </div>
           </div>
         </div>
-
         <Footer />
       </main>
     </div>
