@@ -147,14 +147,12 @@ class MediVisionAPITester:
 
     def test_user_login(self):
         """Test user login with existing credentials"""
-        if not self.token:
+        if not hasattr(self, 'test_email'):
             print("⚠️  Skipping login test - no registered user")
             return False
             
-        # We'll use the same credentials from registration
-        timestamp = datetime.now().strftime("%H%M%S")
         login_data = {
-            "email": f"testdoctor{timestamp}@medivision.test",
+            "email": self.test_email,
             "password": "TestPass123!"
         }
         
