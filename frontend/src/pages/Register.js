@@ -118,7 +118,7 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="auth-form space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="name" className="font-mono text-xs uppercase tracking-wider text-white">
+              <Label htmlFor="name" className="font-mono text-xs uppercase tracking-wider text-white block">
                 Full Name
               </Label>
               <Input
@@ -126,7 +126,7 @@ const Register = () => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="bg-zinc-900/50 border border-white/30 rounded px-4 py-3 text-white placeholder:text-white/40 focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="w-full bg-zinc-800 border-2 border-zinc-600 rounded px-4 py-3 text-white placeholder:text-zinc-400 focus:border-white focus:outline-none"
                 placeholder="Dr. John Smith"
                 required
                 data-testid="register-name-input"
@@ -134,7 +134,7 @@ const Register = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="font-mono text-xs uppercase tracking-wider text-white">
+              <Label htmlFor="email" className="font-mono text-xs uppercase tracking-wider text-white block">
                 Email
               </Label>
               <Input
@@ -142,7 +142,7 @@ const Register = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-zinc-900/50 border border-white/30 rounded px-4 py-3 text-white placeholder:text-white/40 focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="w-full bg-zinc-800 border-2 border-zinc-600 rounded px-4 py-3 text-white placeholder:text-zinc-400 focus:border-white focus:outline-none"
                 placeholder="doctor@hospital.com"
                 required
                 data-testid="register-email-input"
@@ -150,7 +150,7 @@ const Register = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="font-mono text-xs uppercase tracking-wider text-white">
+              <Label htmlFor="password" className="font-mono text-xs uppercase tracking-wider text-white block">
                 Password
               </Label>
               <div className="relative">
@@ -159,7 +159,7 @@ const Register = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-zinc-900/50 border border-white/30 rounded px-4 py-3 pr-10 text-white placeholder:text-white/40 focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="w-full bg-zinc-800 border-2 border-zinc-600 rounded px-4 py-3 pr-10 text-white placeholder:text-zinc-400 focus:border-white focus:outline-none"
                   placeholder="Min. 6 characters"
                   required
                   data-testid="register-password-input"
