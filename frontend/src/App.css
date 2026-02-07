@@ -1,18 +1,18 @@
 /* MediVision AI - Professional Medical Noir Theme */
 
-/* Upload Zone */
+/* Upload Zone - Light Theme */
 .upload-zone {
   position: relative;
-  border: 2px dashed rgba(255, 255, 255, 0.2);
-  background: rgba(5, 5, 5, 0.8);
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  background: rgba(250, 250, 250, 0.8);
   transition: all 0.3s ease;
   overflow: hidden;
 }
 
 .upload-zone:hover,
 .upload-zone.drag-over {
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(10, 10, 10, 0.9);
+  border-color: rgba(0, 0, 0, 0.5);
+  background: rgba(245, 245, 245, 0.9);
 }
 
 .upload-zone .scan-effect {
@@ -21,7 +21,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #FFFFFF, transparent);
+  background: linear-gradient(90deg, transparent, #000000, transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -31,10 +31,10 @@
   animation: scan-line 2s ease-in-out infinite;
 }
 
-/* Analysis Card */
+/* Analysis Card - Light Theme */
 .analysis-card {
-  background: #050505;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   position: relative;
 }
 
@@ -45,7 +45,7 @@
   left: 0;
   width: 3px;
   height: 100%;
-  background: #FFFFFF;
+  background: #000000;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -54,11 +54,11 @@
   opacity: 1;
 }
 
-/* View Toggle */
+/* View Toggle - Light Theme */
 .view-toggle {
   display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 4px;
 }
 
@@ -69,7 +69,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -77,28 +77,28 @@
 }
 
 .view-toggle button.active {
-  color: #000000;
-  background: #FFFFFF;
+  color: #FFFFFF;
+  background: #000000;
 }
 
 .view-toggle button:hover:not(.active) {
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.05);
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.05);
 }
 
-/* Scan History Item */
+/* Scan History Item - Light Theme */
 .scan-item {
   display: flex;
   align-items: center;
   padding: 16px;
-  background: #050505;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .scan-item:hover {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.3);
   transform: translateX(4px);
 }
 
@@ -126,16 +126,16 @@
   }
 }
 
-/* Stat Card */
+/* Stat Card - Light Theme */
 .stat-card {
-  background: #050505;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 24px;
   transition: border-color 0.3s ease;
 }
 
 .stat-card:hover {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 .stat-card .value {
@@ -143,28 +143,29 @@
   font-size: 48px;
   font-weight: 300;
   line-height: 1;
+  color: #000000;
 }
 
 .stat-card .label {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   margin-top: 8px;
 }
 
-/* Footer */
+/* Footer - Light Theme */
 .footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 40px 0;
-  background: #000000;
+  background: #FFFFFF;
 }
 
 .footer-credits {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }
 
 /* Landing Hero */
@@ -242,27 +243,27 @@
   }
 }
 
-/* Navbar */
+/* Navbar - Light Theme */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Sidebar */
+/* Sidebar - Light Theme */
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
   width: 80px;
-  background: #050505;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FAFAFA;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -278,13 +279,13 @@
   }
 }
 
-/* Toast overrides */
+/* Toast overrides - Light Theme */
 [data-sonner-toaster] {
   font-family: 'JetBrains Mono', monospace !important;
 }
 
 [data-sonner-toast] {
-  background: #050505 !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: #FFFFFF !important;
+  background: #FAFAFA !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  color: #000000 !important;
 }
