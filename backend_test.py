@@ -125,9 +125,10 @@ class MediVisionAPITester:
         timestamp = datetime.now().strftime("%H%M%S")
         test_user_data = {
             "name": f"Test Doctor {timestamp}",
-            "email": f"testdoctor{timestamp}@medivision.test",
+            "email": f"testdoctor{timestamp}@example.com",
             "password": "TestPass123!"
         }
+        self.test_email = test_user_data["email"]  # Store for login test
         
         success, response = self.run_test(
             "User Registration",
