@@ -102,7 +102,7 @@ function AppRoutes() {
 
 function App() {
   return (
-    <div className="App min-h-screen bg-black">
+    <div className="App min-h-screen bg-white">
       <BrowserRouter>
         <AuthProvider>
           <AppRoutes />
@@ -110,9 +110,9 @@ function App() {
             position="bottom-right"
             toastOptions={{
               style: {
-                background: '#050505',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: '#FFFFFF',
+                background: '#FAFAFA',
+                border: '1px solid rgba(0, 0, 0, 0.2)',
+                color: '#000000',
                 fontFamily: 'JetBrains Mono, monospace',
               },
             }}
