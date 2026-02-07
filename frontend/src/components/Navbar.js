@@ -14,10 +14,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/dashboard" className="flex items-center gap-3" data-testid="navbar-logo">
-          <div className="w-10 h-10 border border-white/30 flex items-center justify-center">
+          <div className="w-10 h-10 border border-black/30 flex items-center justify-center">
             <Scan className="w-5 h-5" />
           </div>
           <span className="font-mono text-sm uppercase tracking-widest font-medium hidden md:block">
@@ -30,10 +30,10 @@ const Navbar = () => {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5"
+                className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-black/70 hover:text-black hover:bg-black/5"
                 data-testid="user-menu-trigger"
               >
-                <div className="w-8 h-8 border border-white/30 flex items-center justify-center">
+                <div className="w-8 h-8 border border-black/30 flex items-center justify-center">
                   <User className="w-4 h-4" />
                 </div>
                 <span className="hidden md:block">{user?.name}</span>
@@ -41,32 +41,32 @@ const Navbar = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end" 
-              className="bg-zinc-950 border-white/20 min-w-[200px]"
+              className="bg-white border-black/20 min-w-[200px]"
             >
               <div className="px-3 py-2">
-                <p className="font-mono text-xs uppercase tracking-wider text-white/50">
+                <p className="font-mono text-xs uppercase tracking-wider text-black/50">
                   Signed in as
                 </p>
-                <p className="text-sm text-white truncate mt-1">{user?.email}</p>
+                <p className="text-sm text-black truncate mt-1">{user?.email}</p>
               </div>
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-black/10" />
               <DropdownMenuItem 
-                className="text-white/80 cursor-pointer hover:bg-white/5 focus:bg-white/5"
+                className="text-black/80 cursor-pointer hover:bg-black/5 focus:bg-black/5"
                 onClick={() => navigate('/dashboard')}
                 data-testid="menu-dashboard"
               >
                 Dashboard
               </DropdownMenuItem>
               <DropdownMenuItem 
-                className="text-white/80 cursor-pointer hover:bg-white/5 focus:bg-white/5"
+                className="text-black/80 cursor-pointer hover:bg-black/5 focus:bg-black/5"
                 onClick={() => navigate('/history')}
                 data-testid="menu-history"
               >
                 Scan History
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-black/10" />
               <DropdownMenuItem 
-                className="text-red-400 cursor-pointer hover:bg-red-500/10 focus:bg-red-500/10"
+                className="text-red-600 cursor-pointer hover:bg-red-50 focus:bg-red-50"
                 onClick={handleLogout}
                 data-testid="menu-logout"
               >
