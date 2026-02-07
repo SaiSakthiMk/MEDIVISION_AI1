@@ -180,7 +180,7 @@ Provide your analysis in the following JSON format:
         # Create message with image
         user_message = UserMessage(
             text=f"Please analyze this {scan_type.replace('_', ' ').upper()} medical image and provide a comprehensive diagnostic report in the specified JSON format.",
-            image_contents=[image_content]
+            file_contents=[image_content]
         )
         
         response = await chat.send_message(user_message)
