@@ -5,25 +5,25 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --card: 0 0% 2%;
-  --card-foreground: 0 0% 100%;
-  --popover: 0 0% 2%;
-  --popover-foreground: 0 0% 100%;
-  --primary: 0 0% 100%;
-  --primary-foreground: 0 0% 0%;
-  --secondary: 0 0% 10%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 10%;
-  --muted-foreground: 0 0% 63%;
-  --accent: 0 0% 10%;
-  --accent-foreground: 0 0% 100%;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 98%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --primary: 0 0% 0%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 40%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 0%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 0 0% 15%;
-  --input: 0 0% 15%;
-  --ring: 0 0% 100%;
+  --border: 0 0% 85%;
+  --input: 0 0% 85%;
+  --ring: 0 0% 0%;
   --radius: 0rem;
 }
 
@@ -35,8 +35,8 @@
 
 body {
   font-family: 'Manrope', sans-serif;
-  background-color: #000000;
-  color: #FFFFFF;
+  background-color: #FFFFFF;
+  color: #000000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -57,22 +57,22 @@ code, .mono {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #FFFFFF;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272A;
+  background: #D4D4D8;
   border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #A1A1AA;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(255, 255, 255, 0.2);
-  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.2);
+  color: #000000;
 }
 
 /* Focus styles */
@@ -127,20 +127,20 @@ code, .mono {
   animation: fade-in 0.5s ease-out forwards;
 }
 
-/* Medical Noir specific utilities */
+/* Medical Noir specific utilities - Light Theme */
 .noir-card {
-  background: #050505;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   transition: border-color 0.3s ease;
 }
 
 .noir-card:hover {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 .noir-button {
-  background: #FFFFFF;
-  color: #000000;
+  background: #000000;
+  color: #FFFFFF;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 500;
   text-transform: uppercase;
@@ -149,14 +149,14 @@ code, .mono {
 }
 
 .noir-button:hover {
-  background: #E4E4E7;
+  background: #27272A;
   transform: translateY(-1px);
 }
 
 .noir-button-secondary {
   background: transparent;
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.2);
   font-family: 'JetBrains Mono', monospace;
   font-weight: 500;
   text-transform: uppercase;
@@ -165,31 +165,31 @@ code, .mono {
 }
 
 .noir-button-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.4);
 }
 
 .noir-input {
   background: transparent;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  color: #FFFFFF;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  color: #000000;
   font-family: 'Manrope', sans-serif;
   transition: border-color 0.2s ease;
 }
 
 .noir-input:focus {
-  border-bottom-color: #FFFFFF;
+  border-bottom-color: #000000;
   outline: none;
 }
 
 .noir-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }
 
 /* Gradient text for emphasis */
 .text-gradient {
-  background: linear-gradient(90deg, #FFFFFF 0%, #A1A1AA 100%);
+  background: linear-gradient(90deg, #000000 0%, #52525B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
