@@ -1,0 +1,141 @@
+{
+  "persona": {
+    "identity": "E1",
+    "role": "Creative Designer (Anti-AI)",
+    "principles": [
+      "Fusion over Imitation",
+      "Emotion First",
+      "Content is King",
+      "Zoom In",
+      "Negative Space",
+      "Contrast"
+    ]
+  },
+  "project_metadata": {
+    "name": "MediVision AI",
+    "type": "SaaS / Dashboard",
+    "theme_name": "Professional Medical Noir",
+    "aesthetic": "High-Contrast Black & White, Clinical, Precision, Cinematic"
+  },
+  "design_system": {
+    "colors": {
+      "palette": {
+        "background": {
+          "default": "#000000",
+          "paper": "#050505",
+          "subtle": "#0A0A0A"
+        },
+        "foreground": {
+          "default": "#FFFFFF",
+          "muted": "#A1A1AA",
+          "subtle": "#52525B"
+        },
+        "border": {
+          "default": "#27272A",
+          "active": "#FFFFFF"
+        },
+        "primary": {
+          "default": "#FFFFFF",
+          "foreground": "#000000"
+        },
+        "accent": {
+          "alert": "#FF3B30",
+          "clinical": "#3B82F6",
+          "success": "#10B981"
+        }
+      },
+      "rules": [
+        "NO GRADIENTS in backgrounds. Pure, flat, deep blacks.",
+        "Use 1px borders with low opacity (10-20%) for structure.",
+        "Primary action buttons should be White with Black text (High Contrast).",
+        "Alert colors (Red/Blue) should be used ONLY for status indicators, never for decoration."
+      ]
+    },
+    "typography": {
+      "font_family": {
+        "headings": "JetBrains Mono, monospace",
+        "body": "Manrope, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "rules": [
+        "Headings: Uppercase, tracking-widest, font-light or bold (extremes only).",
+        "Body: Clean, high legibility, relaxed line-height.",
+        "Data/Metrics: Monospace font for all numbers and technical data."
+      ]
+    },
+    "layout": {
+      "grid_system": "Bento Grid (Asymmetrical)",
+      "spacing": "Generous (2x standard Tailwind)",
+      "container_style": "Sharp edges, 1px border, no shadow (flat)",
+      "rules": [
+        "Dashboard: Dense data grid, but with 'breathing room' gaps (gap-4 or gap-6).",
+        "Upload Zone: Central, dominant, cinematic focus.",
+        "Footer: Minimal, spacious."
+      ]
+    },
+    "components": {
+      "buttons": {
+        "style": "Sharp rectangular or Pill-shaped",
+        "variant_primary": "bg-white text-black hover:bg-gray-200 transition-colors",
+        "variant_secondary": "bg-transparent border border-white/20 text-white hover:bg-white/10"
+      },
+      "cards": {
+        "style": "bg-black border border-white/10 rounded-none",
+        "hover": "hover:border-white/30 transition-colors duration-300"
+      },
+      "inputs": {
+        "style": "bg-transparent border-b border-white/20 focus:border-white outline-none rounded-none px-0 py-2"
+      }
+    },
+    "animations": {
+      "library": "GSAP",
+      "styles": [
+        "Scanning Effect: A white line moving vertically across images (simulating a scan).",
+        "Staggered Reveal: Dashboard cards fade in one by one.",
+        "Hover Invert: Interactive elements invert colors on hover.",
+        "Text Reveal: 'Typewriter' or 'Decode' effect for AI diagnosis text."
+      ],
+      "instructions": "Use GSAP for all complex animations. React Spring/Framer Motion can be used for simple layout transitions if needed, but GSAP is preferred for the 'medical scan' feel."
+    }
+  },
+  "assets": {
+    "images": {
+      "xray": [
+        "https://images.unsplash.com/photo-1584555684040-bad07f46a21f?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?crop=entropy&cs=srgb&fm=jpg&q=85"
+      ],
+      "mri": [
+        "https://images.unsplash.com/photo-1631563019676-dade0dbdb8fc?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "https://images.unsplash.com/photo-1549925245-f20a1bac6454?crop=entropy&cs=srgb&fm=jpg&q=85"
+      ],
+      "ct_scan": [
+        "https://images.unsplash.com/photo-1758206523830-a5b8afb372a6?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "https://images.unsplash.com/photo-1666214280259-ab57309450b4?crop=entropy&cs=srgb&fm=jpg&q=85"
+      ],
+      "doctor_context": [
+        "https://images.unsplash.com/photo-1698899114629-16b156bfba04?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "https://images.pexels.com/photos/7089019/pexels-photo-7089019.jpeg"
+      ]
+    },
+    "icons": "Lucide React (preferred) or Phosphor Icons (for more technical feel)"
+  },
+  "specific_instructions": {
+    "developer_credits": {
+      "location": "Footer",
+      "text": "Developed by SAISAKTHI, Prasunambika, Mohammad Basit Wani",
+      "style": "text-xs text-white/40 uppercase tracking-widest"
+    },
+    "pages": {
+      "landing": "Minimalist, Hero section with a 'scanning' animation over a medical image. Strong value prop.",
+      "dashboard": "Sidebar navigation (collapsed by default on mobile). Main area: Upload zone (top), Recent Scans (grid), AI Analysis Results (right panel).",
+      "analysis_view": "Split screen: Original Image (left) vs AI Annotated Image (right). 'Doctor View' (technical terms) vs 'Patient View' (simplified language) toggle."
+    }
+  },
+  "universal_guidelines": [
+    "Avoid 'AI Slop': No generic gradients, no rounded corners everywhere.",
+    "Dark Mode Default: The app should be permanently in Dark Mode (Noir).",
+    "Accessibility: Ensure high contrast text (White on Black).",
+    "Micro-interactions: Every button, link, and card must have a hover state.",
+    "Data-TestID: All interactive elements must have data-testid attributes."
+  ]
+}
