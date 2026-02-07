@@ -97,21 +97,21 @@ const Login = () => {
           </Link>
 
           <div className="mb-10">
-            <Link to="/" className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm mb-6 transition-colors" data-testid="back-link">
+            <Link to="/" className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm mb-6 transition-colors" data-testid="back-link">
               <ArrowLeft className="w-4 h-4" />
               Back
             </Link>
-            <h1 className="font-mono text-3xl font-light uppercase tracking-wider mb-2" data-testid="login-title">
+            <h1 className="font-mono text-3xl font-light uppercase tracking-wider mb-2 text-white" data-testid="login-title">
               Sign In
             </h1>
-            <p className="text-white/60">
+            <p className="text-white/70">
               Access your diagnostic dashboard
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="font-mono text-xs uppercase tracking-wider text-white/70">
+              <Label htmlFor="email" className="font-mono text-xs uppercase tracking-wider text-white">
                 Email
               </Label>
               <Input
@@ -119,7 +119,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-transparent border-0 border-b border-white/20 rounded-none px-0 py-3 text-white placeholder:text-white/30 focus:border-white focus-visible:ring-0"
+                className="bg-zinc-900/50 border border-white/30 rounded px-4 py-3 text-white placeholder:text-white/40 focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="doctor@hospital.com"
                 required
                 data-testid="login-email-input"
@@ -127,7 +127,7 @@ const Login = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="font-mono text-xs uppercase tracking-wider text-white/70">
+              <Label htmlFor="password" className="font-mono text-xs uppercase tracking-wider text-white">
                 Password
               </Label>
               <div className="relative">
@@ -136,7 +136,7 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-transparent border-0 border-b border-white/20 rounded-none px-0 py-3 pr-10 text-white placeholder:text-white/30 focus:border-white focus-visible:ring-0"
+                  className="bg-zinc-900/50 border border-white/30 rounded px-4 py-3 pr-10 text-white placeholder:text-white/40 focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0"
                   placeholder="Enter your password"
                   required
                   data-testid="login-password-input"
