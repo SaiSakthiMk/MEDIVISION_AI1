@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, Scan, History, Loader2, CheckCircle, AlertCircle, X } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,6 +18,7 @@ const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const Dashboard = () => {
   const { user, token } = useAuth();
   const navigate = useNavigate();
+  const rootRef = useRef(null);
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [scanType, setScanType] = useState('xray');
@@ -42,6 +45,37 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray('.js-scroll-card').forEach((card, index) => {
+        gsap.fromTo(
+          card,
+          {
+            opacity: 0,
+            y: 24,
+            backgroundColor: '#000000',
+            borderColor: 'rgba(255,255,255,0)',
+            boxShadow: '0 0 0 rgba(255,255,255,0)'
+          },
+          {
+            opacity: 1,
+            y: 0,
+            backgroundColor: '#0b0b0b',
+            borderColor: 'rgba(255,255,255,0.18)',
+            boxShadow: '0 12px 30px rgba(255,255,255,0.08)',
+            duration: 0.7,
+            ease: 'power3.out',
+            delay: Math.min(index * 0.04, 0.2),
+            scrollTrigger: { trigger: card, start: 'top 85%', once: true }
+          }
+        );
+      });
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -110,7 +144,7 @@ const Dashboard = () => {
   const getScanTypeLabel = (type) => ({ xray: 'X-Ray', mri: 'MRI', ct_scan: 'CT Scan' }[type] || type);
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div ref={rootRef} className="min-h-screen bg-black text-white">
       <Navbar />
       <Sidebar />
       
@@ -120,38 +154,38 @@ const Dashboard = () => {
             <h1 className="font-mono text-3xl font-light uppercase tracking-wider mb-2" data-testid="dashboard-title">
               Dashboard
             </h1>
-            <p className="text-gray-600">Welcome back, <span className="text-black font-medium">{user?.name}</span></p>
+            <p className="text-white/70">Welcome back, <span className="text-white font-medium">{user?.name}</span></p>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-            <div className="p-6 bg-gray-50 border border-gray-200" data-testid="stat-total-scans">
+            <div className="p-6 bg-white/5 border border-white/10 js-scroll-card" data-testid="stat-total-scans">
               <div className="font-mono text-4xl font-light mb-2">{stats.total_scans}</div>
-              <div className="text-xs uppercase tracking-widest text-gray-500">Total Scans</div>
+              <div className="text-xs uppercase tracking-widest text-white/60">Total Scans</div>
             </div>
-            <div className="p-6 bg-gray-50 border border-gray-200" data-testid="stat-completed-scans">
+            <div className="p-6 bg-white/5 border border-white/10 js-scroll-card" data-testid="stat-completed-scans">
               <div className="font-mono text-4xl font-light mb-2">{stats.completed_scans}</div>
-              <div className="text-xs uppercase tracking-widest text-gray-500">Analyzed</div>
+              <div className="text-xs uppercase tracking-widest text-white/60">Analyzed</div>
             </div>
-            <div className="p-6 bg-gray-50 border border-gray-200" data-testid="stat-scan-types">
+            <div className="p-6 bg-white/5 border border-white/10 js-scroll-card" data-testid="stat-scan-types">
               <div className="font-mono text-4xl font-light mb-2">{Object.keys(stats.scan_types).length || 0}</div>
-              <div className="text-xs uppercase tracking-widest text-gray-500">Scan Types</div>
+              <div className="text-xs uppercase tracking-widest text-white/60">Scan Types</div>
             </div>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Upload Zone */}
             <div className="lg:col-span-2">
-              <div className="p-6 bg-gray-50 border border-gray-200">
+              <div className="p-6 bg-white/5 border border-white/10 js-scroll-card">
                 <h2 className="font-mono text-sm uppercase tracking-wider mb-6" data-testid="upload-section-title">New Analysis</h2>
                 
                 <div className="mb-6">
-                  <label className="font-mono text-xs uppercase tracking-wider text-gray-600 mb-2 block">Scan Type</label>
+                  <label className="font-mono text-xs uppercase tracking-wider text-white/60 mb-2 block">Scan Type</label>
                   <Select value={scanType} onValueChange={setScanType}>
-                    <SelectTrigger className="bg-white border border-gray-300" data-testid="scan-type-select">
+                    <SelectTrigger className="bg-black border border-white/20 text-white" data-testid="scan-type-select">
                       <SelectValue placeholder="Select scan type" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-300">
+                    <SelectContent className="bg-black border-white/20 text-white">
                       <SelectItem value="xray">X-Ray</SelectItem>
                       <SelectItem value="mri">MRI</SelectItem>
                       <SelectItem value="ct_scan">CT Scan</SelectItem>
@@ -160,29 +194,29 @@ const Dashboard = () => {
                 </div>
 
                 <div
-                  className={`relative min-h-[300px] flex flex-col items-center justify-center p-8 border-2 border-dashed ${dragActive ? 'border-black bg-gray-100' : 'border-gray-300 bg-white'} ${preview ? 'border-solid' : ''}`}
+                  className={`relative min-h-[300px] flex flex-col items-center justify-center p-8 border-2 border-dashed ${dragActive ? 'border-white bg-white/5' : 'border-white/20 bg-black'} ${preview ? 'border-solid' : ''}`}
                   onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
                   data-testid="upload-zone"
                 >
                   {preview ? (
                     <div className="relative w-full h-full">
-                      <button onClick={clearFile} className="absolute top-2 right-2 z-10 p-2 bg-white hover:bg-gray-100 rounded-full border border-gray-300" data-testid="clear-file-btn">
+                      <button onClick={clearFile} className="absolute top-2 right-2 z-10 p-2 bg-black/80 hover:bg-black rounded-full border border-white/20" data-testid="clear-file-btn">
                         <X className="w-4 h-4" />
                       </button>
                       <img src={preview} alt="Preview" className="max-h-[250px] mx-auto object-contain" />
                       <div className="text-center mt-4">
-                        <p className="font-mono text-sm text-gray-700">{file?.name}</p>
-                        <p className="text-xs text-gray-500 mt-1">{(file?.size / 1024 / 1024).toFixed(2)} MB</p>
+                        <p className="font-mono text-sm text-white">{file?.name}</p>
+                        <p className="text-xs text-white/60 mt-1">{(file?.size / 1024 / 1024).toFixed(2)} MB</p>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <Upload className="w-12 h-12 text-gray-400 mb-4" />
-                      <p className="font-mono text-sm uppercase tracking-wider text-gray-600 mb-2">Drop your medical image here</p>
-                      <p className="text-xs text-gray-500 mb-4">JPEG, PNG, or WEBP up to 10MB</p>
+                      <Upload className="w-12 h-12 text-white/40 mb-4" />
+                      <p className="font-mono text-sm uppercase tracking-wider text-white/70 mb-2">Drop your medical image here</p>
+                      <p className="text-xs text-white/60 mb-4">JPEG, PNG, or WEBP up to 10MB</p>
                       <label>
                         <input type="file" className="hidden" accept="image/jpeg,image/png,image/webp" onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])} data-testid="file-input" />
-                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-mono text-xs uppercase tracking-wider cursor-pointer hover:bg-gray-800">Browse Files</span>
+                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-mono text-xs uppercase tracking-wider cursor-pointer hover:bg-gray-200">Browse Files</span>
                       </label>
                     </>
                   )}
@@ -191,26 +225,26 @@ const Dashboard = () => {
                 {uploading && (
                   <div className="mt-4">
                     <Progress value={uploadProgress} className="h-1" />
-                    <p className="font-mono text-xs text-gray-500 mt-2">{uploadProgress < 90 ? 'Uploading...' : 'Analyzing with AI...'}</p>
+                    <p className="font-mono text-xs text-white/60 mt-2">{uploadProgress < 90 ? 'Uploading...' : 'Analyzing with AI...'}</p>
                   </div>
                 )}
 
-                <Button onClick={handleUpload} disabled={!file || uploading} className="w-full mt-6 font-mono text-xs uppercase tracking-wider bg-black text-white hover:bg-gray-800 py-6 disabled:opacity-50" data-testid="analyze-btn">
+                <Button onClick={handleUpload} disabled={!file || uploading} className="w-full mt-6 font-mono text-xs uppercase tracking-wider bg-white text-black hover:bg-gray-200 py-6 disabled:opacity-50" data-testid="analyze-btn">
                   {uploading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Processing...</>) : (<><Scan className="w-4 h-4 mr-2" />Analyze Image</>)}
                 </Button>
               </div>
 
               {currentScan && currentScan.status === 'completed' && (
-                <div className="p-6 bg-gray-50 border border-gray-200 mt-6" data-testid="current-scan-result">
+                <div className="p-6 bg-white/5 border border-white/10 mt-6" data-testid="current-scan-result">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-mono text-sm uppercase tracking-wider flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-600" />Analysis Complete
                     </h3>
-                    <Button variant="ghost" size="sm" className="font-mono text-xs" onClick={() => navigate(`/scan/${currentScan.id}`)} data-testid="view-full-report-btn">View Full Report</Button>
+                    <Button variant="ghost" size="sm" className="font-mono text-xs text-white/80 hover:text-white hover:bg-white/10" onClick={() => navigate(`/scan/${currentScan.id}`)} data-testid="view-full-report-btn">View Full Report</Button>
                   </div>
-                  <div className="p-4 bg-white border border-gray-200">
-                    <h4 className="font-mono text-xs uppercase tracking-wider text-gray-600 mb-3">Quick Summary</h4>
-                    <p className="text-sm text-gray-700 leading-relaxed">{currentScan.patient_view?.summary || 'Analysis completed successfully.'}</p>
+                  <div className="p-4 bg-black border border-white/10">
+                    <h4 className="font-mono text-xs uppercase tracking-wider text-white/60 mb-3">Quick Summary</h4>
+                    <p className="text-sm text-white/80 leading-relaxed">{currentScan.patient_view?.summary || 'Analysis completed successfully.'}</p>
                   </div>
                 </div>
               )}
@@ -218,28 +252,28 @@ const Dashboard = () => {
 
             {/* Recent Scans */}
             <div className="lg:col-span-1">
-              <div className="p-6 bg-gray-50 border border-gray-200">
+              <div className="p-6 bg-white/5 border border-white/10 js-scroll-card">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="font-mono text-sm uppercase tracking-wider" data-testid="recent-scans-title">Recent Scans</h2>
-                  <Button variant="ghost" size="sm" className="font-mono text-xs text-gray-500 hover:text-black" onClick={() => navigate('/history')} data-testid="view-all-scans-btn">
+                  <Button variant="ghost" size="sm" className="font-mono text-xs text-white/60 hover:text-white hover:bg-white/10" onClick={() => navigate('/history')} data-testid="view-all-scans-btn">
                     <History className="w-4 h-4 mr-2" />View All
                   </Button>
                 </div>
                 {recentScans.length === 0 ? (
-                  <div className="text-center py-12 text-gray-400">
-                    <Scan className="w-8 h-8 mx-auto mb-3 opacity-50" />
+                  <div className="text-center py-12 text-white/40">
+                    <Scan className="w-8 h-8 mx-auto mb-3 opacity-60" />
                     <p className="text-sm">No scans yet</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {recentScans.map((scan, index) => (
-                      <div key={scan.id} className="flex items-center p-4 bg-white border border-gray-200 cursor-pointer hover:border-gray-400" onClick={() => navigate(`/scan/${scan.id}`)} data-testid={`recent-scan-${index}`}>
-                        <div className="w-12 h-12 bg-gray-100 flex items-center justify-center mr-4 flex-shrink-0">
+                      <div key={scan.id} className="flex items-center p-4 bg-black border border-white/10 cursor-pointer hover:border-white/40 js-scroll-card" onClick={() => navigate(`/scan/${scan.id}`)} data-testid={`recent-scan-${index}`}>
+                        <div className="w-12 h-12 bg-white/5 flex items-center justify-center mr-4 flex-shrink-0">
                           {scan.status === 'completed' ? <CheckCircle className="w-5 h-5 text-green-600" /> : scan.status === 'failed' ? <AlertCircle className="w-5 h-5 text-red-500" /> : <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-mono text-xs uppercase tracking-wider truncate">{getScanTypeLabel(scan.scan_type)}</p>
-                          <p className="text-xs text-gray-500 truncate mt-1">{scan.file_name}</p>
+                          <p className="text-xs text-white/60 truncate mt-1">{scan.file_name}</p>
                         </div>
                       </div>
                     ))}

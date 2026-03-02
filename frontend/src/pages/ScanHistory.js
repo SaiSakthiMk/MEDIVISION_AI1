@@ -70,7 +70,7 @@ const ScanHistory = () => {
   });
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-black text-white">
       <Navbar />
       <Sidebar />
       
@@ -80,29 +80,29 @@ const ScanHistory = () => {
             <h1 className="font-mono text-3xl font-light uppercase tracking-wider mb-2" data-testid="history-title">
               Scan History
             </h1>
-            <p className="text-gray-600">View and manage all your medical image analyses</p>
+            <p className="text-white/70">View and manage all your medical image analyses</p>
           </div>
 
           {/* Filters */}
-          <div className="p-4 bg-gray-50 border border-gray-200 mb-6">
+          <div className="p-4 bg-white/5 border border-white/10 mb-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
                 <Input
                   placeholder="Search by filename..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white border-gray-300"
+                  className="pl-10 bg-black border-white/20 text-white placeholder-white/40"
                   data-testid="search-input"
                 />
               </div>
               <div className="flex gap-4">
                 <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger className="w-[140px] bg-white border-gray-300" data-testid="filter-type-select">
-                    <Filter className="w-4 h-4 mr-2 text-gray-500" />
+                  <SelectTrigger className="w-[140px] bg-black border-white/20 text-white" data-testid="filter-type-select">
+                    <Filter className="w-4 h-4 mr-2 text-white/60" />
                     <SelectValue placeholder="Type" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border-gray-300">
+                  <SelectContent className="bg-black border-white/20 text-white">
                     <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="xray">X-Ray</SelectItem>
                     <SelectItem value="mri">MRI</SelectItem>
@@ -111,10 +111,10 @@ const ScanHistory = () => {
                 </Select>
                 
                 <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger className="w-[140px] bg-white border-gray-300" data-testid="filter-status-select">
+                  <SelectTrigger className="w-[140px] bg-black border-white/20 text-white" data-testid="filter-status-select">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border-gray-300">
+                  <SelectContent className="bg-black border-white/20 text-white">
                     <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="processing">Processing</SelectItem>
@@ -125,21 +125,21 @@ const ScanHistory = () => {
             </div>
           </div>
 
-          <p className="text-sm text-gray-500 mb-4 font-mono">
+          <p className="text-sm text-white/60 mb-4 font-mono">
             {filteredScans.length} {filteredScans.length === 1 ? 'scan' : 'scans'} found
           </p>
 
           {loading ? (
-            <div className="p-12 bg-gray-50 border border-gray-200 text-center">
-              <Loader2 className="w-8 h-8 mx-auto animate-spin text-gray-400" />
-              <p className="text-gray-500 mt-4 font-mono text-sm">Loading scans...</p>
+            <div className="p-12 bg-white/5 border border-white/10 text-center">
+              <Loader2 className="w-8 h-8 mx-auto animate-spin text-white/50" />
+              <p className="text-white/60 mt-4 font-mono text-sm">Loading scans...</p>
             </div>
           ) : filteredScans.length === 0 ? (
-            <div className="p-12 bg-gray-50 border border-gray-200 text-center">
-              <Scan className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500 font-mono text-sm">No scans found</p>
+            <div className="p-12 bg-white/5 border border-white/10 text-center">
+              <Scan className="w-12 h-12 mx-auto text-white/40 mb-4" />
+              <p className="text-white/60 font-mono text-sm">No scans found</p>
               {(searchQuery || filterType !== 'all' || filterStatus !== 'all') && (
-                <Button variant="ghost" className="mt-4 font-mono text-xs" onClick={() => { setSearchQuery(''); setFilterType('all'); setFilterStatus('all'); }} data-testid="clear-filters-btn">
+                <Button variant="ghost" className="mt-4 font-mono text-xs text-white/80 hover:text-white hover:bg-white/10" onClick={() => { setSearchQuery(''); setFilterType('all'); setFilterStatus('all'); }} data-testid="clear-filters-btn">
                   Clear Filters
                 </Button>
               )}
@@ -147,39 +147,39 @@ const ScanHistory = () => {
           ) : (
             <div className="space-y-3">
               {filteredScans.map((scan, index) => (
-                <div key={scan.id} className="p-4 bg-gray-50 border border-gray-200 flex items-center gap-4 hover:border-gray-400 cursor-pointer group" onClick={() => navigate(`/scan/${scan.id}`)} data-testid={`scan-item-${index}`}>
-                  <div className="w-16 h-16 bg-gray-200 flex-shrink-0 overflow-hidden">
+                <div key={scan.id} className="p-4 bg-white/5 border border-white/10 flex items-center gap-4 hover:border-white/40 cursor-pointer group" onClick={() => navigate(`/scan/${scan.id}`)} data-testid={`scan-item-${index}`}>
+                  <div className="w-16 h-16 bg-white/10 flex-shrink-0 overflow-hidden">
                     {scan.image_base64 ? (
                       <img src={`data:image/jpeg;base64,${scan.image_base64}`} alt={scan.file_name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Scan className="w-6 h-6 text-gray-400" />
+                        <Scan className="w-6 h-6 text-white/50" />
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-1">
-                      <span className="font-mono text-xs uppercase tracking-wider px-2 py-1 bg-white border border-gray-300">{getScanTypeLabel(scan.scan_type)}</span>
+                      <span className="font-mono text-xs uppercase tracking-wider px-2 py-1 bg-black border border-white/20 text-white">{getScanTypeLabel(scan.scan_type)}</span>
                       {scan.status === 'completed' && <CheckCircle className="w-4 h-4 text-green-600" />}
                       {scan.status === 'failed' && <AlertCircle className="w-4 h-4 text-red-500" />}
-                      {scan.status === 'processing' && <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />}
+                      {scan.status === 'processing' && <Loader2 className="w-4 h-4 text-white/50 animate-spin" />}
                     </div>
-                    <p className="text-sm text-gray-700 truncate">{scan.file_name}</p>
-                    <p className="text-xs text-gray-500 mt-1 font-mono">{formatDate(scan.created_at)}</p>
+                    <p className="text-sm text-white/80 truncate">{scan.file_name}</p>
+                    <p className="text-xs text-white/60 mt-1 font-mono">{formatDate(scan.created_at)}</p>
                   </div>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100" onClick={(e) => e.stopPropagation()} data-testid={`delete-scan-${index}`}>
+                      <Button variant="ghost" size="icon" className="text-white/40 hover:text-red-400 opacity-0 group-hover:opacity-100" onClick={(e) => e.stopPropagation()} data-testid={`delete-scan-${index}`}>
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-white border-gray-300">
+                    <AlertDialogContent className="bg-black border-white/20 text-white">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="font-mono uppercase tracking-wider">Delete Scan</AlertDialogTitle>
-                        <AlertDialogDescription className="text-gray-600">This will permanently delete this scan and its analysis results.</AlertDialogDescription>
+                        <AlertDialogDescription className="text-white/70">This will permanently delete this scan and its analysis results.</AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="bg-gray-100 border-gray-300">Cancel</AlertDialogCancel>
+                        <AlertDialogCancel className="bg-black border-white/20 text-white">Cancel</AlertDialogCancel>
                         <AlertDialogAction className="bg-red-500 text-white hover:bg-red-600" onClick={(e) => { e.stopPropagation(); handleDelete(scan.id); }}>Delete</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

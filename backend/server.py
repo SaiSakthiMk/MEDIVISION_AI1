@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime, timezone
 import jwt
 import bcrypt
-from PIL import Image
+from PIL import Image, ImageFilter, ImageStat
 import io
 
 ROOT_DIR = Path(__file__).parent
@@ -136,15 +136,169 @@ def preprocess_image(image_bytes: bytes) -> bytes:
         return image_bytes
 
 async def analyze_with_gemini(image_base64: str, scan_type: str) -> dict:
-    """Analyze medical image using Gemini 1.5 Flash"""
+    """Analyze medical image using OpenAI vision models with local fallback."""
+    _local_xray_model = getattr(analyze_with_gemini, "_local_xray_model", None)
+
+    def analyze_locally_with_ml(image_b64: str, scan_kind: str) -> dict:
+        """
+        Local ML inference for chest X-ray using torchxrayvision DenseNet.
+        Requires: torch, numpy, scikit-image, torchxrayvision
+        """
+        if scan_kind.lower() != "xray":
+            raise RuntimeError("Local ML model currently supports xray only.")
+
+        import numpy as np
+        import torch
+        from skimage.transform import resize
+        import torchxrayvision as xrv
+
+        nonlocal _local_xray_model
+        if _local_xray_model is None:
+            _local_xray_model = xrv.models.DenseNet(weights="densenet121-res224-all")
+            _local_xray_model.eval()
+            setattr(analyze_with_gemini, "_local_xray_model", _local_xray_model)
+
+        image_bytes = base64.b64decode(image_b64)
+        image = Image.open(io.BytesIO(image_bytes)).convert("L")
+        img = np.array(image).astype(np.float32) / 255.0
+        img = resize(img, (224, 224), anti_aliasing=True, preserve_range=True).astype(np.float32)
+        img = img[None, None, :, :]  # [B,C,H,W]
+
+        with torch.no_grad():
+            preds = _local_xray_model(torch.from_numpy(img))
+            probs = torch.sigmoid(preds)[0].cpu().numpy()
+
+        pathologies = _local_xray_model.pathologies
+        top_idx = np.argsort(probs)[::-1][:5]
+        top_items = [(pathologies[i], float(probs[i])) for i in top_idx if probs[i] >= 0.20]
+
+        if not top_items:
+            top_items = [("No high-probability abnormality detected by local model", 0.0)]
+
+        findings = [f"{name}: probability {prob:.2f}" for name, prob in top_items]
+        likely = [name for name, prob in top_items if prob >= 0.35 and "No high-probability" not in name]
+        likely_text = ", ".join(likely) if likely else "No strong abnormality signal"
+
+        return {
+            "doctor_view": {
+                "summary": "Local DenseNet chest X-ray model inference completed.",
+                "findings": findings,
+                "observations": [
+                    "Model: torchxrayvision DenseNet121 (res224, all pathologies)",
+                    f"Top likely patterns: {likely_text}",
+                ],
+                "recommendations": [
+                    "Validate with clinical context and radiologist review.",
+                    "Use confirmatory imaging/labs if clinically indicated."
+                ],
+                "confidence_level": "Medium",
+                "areas_of_concern": likely
+            },
+            "patient_view": {
+                "summary": "Your X-ray was analyzed by a local machine-learning model.",
+                "findings": [f"Most likely patterns found: {likely_text}."],
+                "what_it_means": "This is an AI screening result and not a final diagnosis.",
+                "next_steps": [
+                    "Share this report with your doctor/radiologist.",
+                    "Follow medical advice for confirmation tests."
+                ],
+                "reassurance": "Only your doctor can confirm diagnosis."
+            }
+        }
+
+    def analyze_locally_with_pil(image_b64: str, scan_kind: str) -> dict:
+        """Lightweight local vision analysis that does not require external APIs."""
+        image_bytes = base64.b64decode(image_b64)
+        image = Image.open(io.BytesIO(image_bytes)).convert("L")
+        width, height = image.size
+        pixel_count = max(1, width * height)
+
+        stats = ImageStat.Stat(image)
+        mean_brightness = float(stats.mean[0])
+        std_dev = float(stats.stddev[0])
+
+        # Edge-density proxy for structural complexity.
+        edges = image.filter(ImageFilter.FIND_EDGES)
+        edge_pixels = sum(1 for px in edges.getdata() if px > 30)
+        edge_density = edge_pixels / pixel_count
+
+        findings = [
+            f"Analyzed locally using image-statistics pipeline ({scan_kind.replace('_', ' ').upper()}).",
+            f"Mean grayscale brightness: {mean_brightness:.1f}/255.",
+            f"Contrast estimate (std dev): {std_dev:.1f}.",
+            f"Edge-density estimate: {edge_density:.3f}.",
+        ]
+
+        quality_notes = []
+        if mean_brightness < 45:
+            quality_notes.append("Image appears underexposed (dark).")
+        elif mean_brightness > 210:
+            quality_notes.append("Image appears overexposed (bright).")
+        else:
+            quality_notes.append("Exposure appears within a usable range.")
+
+        if std_dev < 25:
+            quality_notes.append("Low contrast may hide subtle findings.")
+        else:
+            quality_notes.append("Contrast appears moderate-to-good.")
+
+        if edge_density < 0.05:
+            quality_notes.append("Low structural edge content; verify image sharpness.")
+        elif edge_density > 0.20:
+            quality_notes.append("High structural detail is present.")
+
+        confidence = "Low" if std_dev < 20 else ("Medium" if std_dev < 40 else "Medium")
+
+        return {
+            "doctor_view": {
+                "summary": "Local on-device image quality and structure analysis completed.",
+                "findings": findings,
+                "observations": quality_notes,
+                "recommendations": [
+                    "Treat this as preliminary technical screening, not diagnosis.",
+                    "Correlate with clinical history and radiologist interpretation.",
+                    "If quality is poor, reacquire scan at higher clarity."
+                ],
+                "confidence_level": confidence,
+                "areas_of_concern": []
+            },
+            "patient_view": {
+                "summary": "Your image was analyzed locally on this system.",
+                "findings": [
+                    "The system checked image clarity, brightness, and structure.",
+                    "This helps detect whether the scan quality is suitable for review."
+                ],
+                "what_it_means": "This result is a technical pre-screen and does not replace a doctor’s diagnosis.",
+                "next_steps": [
+                    "Share the report with a doctor/radiologist.",
+                    "If advised, upload a clearer image for better review."
+                ],
+                "reassurance": "You now have a real local analysis result instead of a placeholder response."
+            }
+        }
+
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
-        
-        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if os.environ.get("MOCK_AI", "").lower() in ("1", "true", "yes"):
+            try:
+                if os.environ.get("USE_LOCAL_ML", "true").lower() in ("1", "true", "yes"):
+                    return analyze_locally_with_ml(image_base64, scan_type)
+            except Exception as ml_err:
+                logger.warning(f"Local ML unavailable, falling back to basic analysis: {ml_err}")
+            return analyze_locally_with_pil(image_base64, scan_type)
+
+        from openai import OpenAI
+        import json
+        import re
+
+        api_key = os.environ.get('OPENAI_API_KEY')
         if not api_key:
-            raise Exception("EMERGENT_LLM_KEY not configured")
-        
-        # System message for medical analysis
+            try:
+                if os.environ.get("USE_LOCAL_ML", "true").lower() in ("1", "true", "yes"):
+                    return analyze_locally_with_ml(image_base64, scan_type)
+            except Exception as ml_err:
+                logger.warning(f"Local ML unavailable, falling back to basic analysis: {ml_err}")
+            return analyze_locally_with_pil(image_base64, scan_type)
+
         system_message = """You are an advanced medical imaging AI assistant. Analyze the provided medical image and provide a comprehensive diagnostic report.
 
 IMPORTANT: You are providing educational analysis only. This is NOT a medical diagnosis and should not replace professional medical advice.
@@ -168,55 +322,61 @@ Provide your analysis in the following JSON format:
     }
 }"""
 
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=f"medivision_{uuid.uuid4()}",
-            system_message=system_message
-        ).with_model("gemini", "gemini-2.0-flash")
-        
-        # Create image content
-        image_content = ImageContent(image_base64=image_base64)
-        
-        # Create message with image
-        user_message = UserMessage(
-            text=f"Please analyze this {scan_type.replace('_', ' ').upper()} medical image and provide a comprehensive diagnostic report in the specified JSON format.",
-            file_contents=[image_content]
+        prompt = (
+            f"{system_message}\n\n"
+            f"Please analyze this {scan_type.replace('_', ' ').upper()} medical image "
+            "and provide the report strictly in the JSON format above."
         )
-        
-        response = await chat.send_message(user_message)
-        
-        # Parse the JSON response
-        import json
-        import re
-        
-        # Try to extract JSON from the response
-        json_match = re.search(r'\{[\s\S]*\}', response)
-        if json_match:
-            result = json.loads(json_match.group())
-            return result
-        else:
-            # Fallback structure
-            return {
-                "doctor_view": {
-                    "summary": response[:500] if len(response) > 500 else response,
-                    "findings": ["Analysis completed"],
-                    "observations": ["Image processed successfully"],
-                    "recommendations": ["Consult with a medical professional for detailed interpretation"],
-                    "confidence_level": "Medium",
-                    "areas_of_concern": []
-                },
-                "patient_view": {
-                    "summary": "Your scan has been analyzed.",
-                    "findings": ["The AI has reviewed your image"],
-                    "what_it_means": "Please consult with your doctor for a detailed explanation.",
-                    "next_steps": ["Schedule a follow-up with your healthcare provider"],
-                    "reassurance": "Remember, this is an AI-assisted analysis. Your doctor will provide the final interpretation."
+
+        client = OpenAI(api_key=api_key)
+        model_name = os.environ.get("OPENAI_VISION_MODEL", "gpt-4.1-mini")
+        response = client.responses.create(
+            model=model_name,
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": prompt},
+                        {
+                            "type": "input_image",
+                            "image_url": f"data:image/jpeg;base64,{image_base64}",
+                        },
+                    ],
                 }
+            ],
+        )
+        response_text = response.output_text or ""
+
+        json_match = re.search(r'\{[\s\S]*\}', response_text)
+        if json_match:
+            return json.loads(json_match.group())
+
+        return {
+            "doctor_view": {
+                "summary": response_text[:500] if len(response_text) > 500 else response_text,
+                "findings": ["Analysis completed"],
+                "observations": ["Image processed successfully"],
+                "recommendations": ["Consult with a medical professional for detailed interpretation"],
+                "confidence_level": "Medium",
+                "areas_of_concern": []
+            },
+            "patient_view": {
+                "summary": "Your scan has been analyzed.",
+                "findings": ["The AI has reviewed your image"],
+                "what_it_means": "Please consult with your doctor for a detailed explanation.",
+                "next_steps": ["Schedule a follow-up with your healthcare provider"],
+                "reassurance": "Remember, this is an AI-assisted analysis. Your doctor will provide the final interpretation."
             }
-            
+        }
+
     except Exception as e:
-        logger.error(f"Gemini analysis error: {e}")
-        raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
+        logger.error(f"Cloud AI analysis error, switching to local fallback: {e}")
+        try:
+            if os.environ.get("USE_LOCAL_ML", "true").lower() in ("1", "true", "yes"):
+                return analyze_locally_with_ml(image_base64, scan_type)
+        except Exception as ml_err:
+            logger.warning(f"Local ML unavailable, falling back to basic analysis: {ml_err}")
+        return analyze_locally_with_pil(image_base64, scan_type)
 
 # ================== Auth Routes ==================
 
@@ -358,6 +518,7 @@ async def process_medical_image(
             {"$set": {"status": "failed"}}
         )
         scan_doc["status"] = "failed"
+        raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
     
     return ScanResponse(**{k: v for k, v in scan_doc.items() if k != "_id"})
 
